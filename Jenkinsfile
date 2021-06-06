@@ -9,8 +9,6 @@ pipeline {
       stage('Build and test') { 
             steps {
                 sh 'mvn -B -DskipTests clean package' 
-            }
-	    steps {
                 sh 'mvn test'
             }
             post {
@@ -21,9 +19,7 @@ pipeline {
       }
       stage('checkout') {
            steps {
-             
-                git branch: 'main', url: 'https://github.com/dinesh0314/app-tomcat-java.git'
-             
+                git branch: 'main', url: 'https://github.com/dinesh0314/sample-app.git'
           }
         }
      stage('Docker Build and Tag') {
