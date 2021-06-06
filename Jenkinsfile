@@ -6,13 +6,11 @@ pipeline {
         }
     }  
  stages {
-      stage('Build') { 
+      stage('Build and test') { 
             steps {
                 sh 'mvn -B -DskipTests clean package' 
             }
-        }
-      stage('Test') {
-            steps {
+	    steps {
                 sh 'mvn test'
             }
             post {
@@ -20,7 +18,7 @@ pipeline {
                     junit '*.xml'
                     archiveArtifacts 'target/*.jar'
                 }
-            }
+      }
       stage('checkout') {
            steps {
              
