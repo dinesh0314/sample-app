@@ -9,57 +9,13 @@ pipeline {
       stage('Build and test') { 
             steps {
                 sh 'mvn -B -DskipTests clean package' 
-                sh 'mvn test'
             }
             post {
                 always {
                     junit '*.xml'
-                    archiveArtifacts 'target/*.jar'
+                    archiveArtifacts 'target/*.war'
                 }
-      }
-      stage('checkout') {
-           steps {
-                git branch: 'main', url: 'https://github.com/dinesh0314/sample-app.git'
-          }
-        }
-     stage('Docker Build and Tag') {
-           steps {
-              
-                sh 'docker build -t samplewebapp:latest .' 
-                sh 'docker tag samplewebapp dinesh0314/samplewebapp:latest'
-                //sh 'docker tag samplewebapp dinesh0314/samplewebapp:$BUILD_NUMBER'
-               
-          }
-     }
+           }
      
-    stage('Publish image to Docker Hub') {
-          
-       steps {
-           withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', 
-                        usernameVariable: 'dockerHubUser')]) {
-              sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-              sh  'docker push dinesh0314/samplewebapp:latest'
-        //  sh  'docker push dinesh0314/samplewebapp:$BUILD_NUMBER' 
-        }
-                  
-       }
-   }
-     
-   stage('Run Docker container on Jenkins Agent') {
-             
-            steps 
-			{
-                sh "docker run -d -p 8003:8080 dinesh0314/samplewebapp"
- 
-            }
-   }
-   stage('Run Docker container on remote hosts') {
-             
-            steps {
-                sh 'docker -H ssh://jenkins@192.168.56.23 run -d -p 8003:8080 dinesh0314/samplewebapp'
- 
-            }
-        }
-  }   
-}
+ }
 }
